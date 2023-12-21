@@ -1,6 +1,9 @@
 1. sudo apt install libsdl2-dev
 2. make
 3. make lib
-4. export LD_LIBRARY_PATH=../c-ray/lib:$LD_LIBRARY_PATH
+4. export LD_LIBRARY_PATH=../c-ray/lib:$LD_LIBRARY_PATH (to do everytime)
 5. gcc main.c -o main.o -L../c-ray/lib -lc-ray -lm
-6. ./main.o
+6. gcc  $(find ../c-ray/c-ray/src/lib ../c-ray/c-ray/src/driver ../c-ray/c-ray/src/common ../c-ray/c-ray/generated/ -name '*.c'  | grep -v 'main.c') main.c -o your_program -I../c-ray/c-ray/src/driver/encoders -I../c-ray/c-ray/include -L../c-ray/c-ray/lib -lc-ray -lpthread -lm -ldl
+
+
+commit: 84109d4

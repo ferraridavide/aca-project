@@ -12,6 +12,9 @@
 #include "../c-ray/src/driver/args.h"
 #include "../c-ray/src/driver/sdl.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 
 int main() {
      // Initialize the c-ray renderer
@@ -35,7 +38,7 @@ int main() {
 
     struct imageFile file = (struct imageFile){
 			.filePath = "output/",
-			.fileName = "image.png",
+			.fileName = "output.png",
 			.count =  cr_renderer_get_num_pref(renderer, cr_renderer_output_num),
 			.type = png,
 			.info = {
