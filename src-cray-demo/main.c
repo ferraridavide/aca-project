@@ -1,6 +1,16 @@
-#include "../c-ray/c-ray/include/c-ray/c-ray.h"
-#include "../c-ray/c-ray/src/driver/imagefile.h"
-#include "../c-ray/c-ray/src/driver/encoders/encoder.h"
+#include "../c-ray/include/c-ray/c-ray.h"
+#include "../c-ray/src/driver/imagefile.h"
+#include "../c-ray/src/common/logging.h"
+#include "../c-ray/src/common/fileio.h"
+#include "../c-ray/src/common/platform/terminal.h"
+#include "../c-ray/src/common/timer.h"
+#include "../c-ray/src/common/hashtable.h"
+#include "../c-ray/src/common/vendored/cJSON.h"
+#include "../c-ray/src/common/json_loader.h"
+#include "../c-ray/src/common/platform/capabilities.h"
+#include "../c-ray/src/driver/encoders/encoder.h"
+#include "../c-ray/src/driver/args.h"
+#include "../c-ray/src/driver/sdl.h"
 #include <stdio.h>
 
 int main() {
@@ -8,7 +18,7 @@ int main() {
     // int *renderer = cr_renderer_();
     struct cr_renderer *renderer = cr_new_renderer();
 
-    const char *jsonFilePath = "../c-ray/c-ray/input/hdr.json";
+    const char *jsonFilePath = "../c-ray/input/hdr.json";
 
     // Load the JSON file into the cr_renderer
     bool success = cr_load_json(renderer, jsonFilePath);
@@ -20,7 +30,7 @@ int main() {
     }
     printf("Rendering...!\n");
 
-    struct cr_bitmap *final = cr_renderer_render(renderer);
+    cr_renderer_render(renderer);
     
 
     struct imageFile file = (struct imageFile){
@@ -35,11 +45,10 @@ int main() {
 				.gitHash = cr_get_git_hash(),
 				.threadCount = cr_renderer_get_num_pref(renderer, cr_renderer_threads)
 			},
-			.t = final
+            .t = cr_renderer_get_result(renderer)
 		};
     writeImage(&file);
     printf("Rendered!\n");
-    cr_bitmap_free(final);
     cr_destroy_renderer(renderer);
 
     return 0;

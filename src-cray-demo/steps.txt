@@ -1,0 +1,6 @@
+1. sudo apt install libsdl2-dev
+2. make
+3. make lib
+4. export LD_LIBRARY_PATH=../c-ray/lib:$LD_LIBRARY_PATH
+5. gcc main.c -o main.o -L../c-ray/lib -lc-ray -lm
+6. ./main.o
