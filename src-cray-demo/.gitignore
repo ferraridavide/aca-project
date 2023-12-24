@@ -1,0 +1,5 @@
+# Ignore the compiled binary
+cray-demo
+
+# Ignore output dir content
+/output/*
