@@ -9,6 +9,8 @@ services:
       - mpi_network
     ports:
       - "8022:22"
+    volumes:
+      - ./shared_volume:/home/ubuntu/data
 
   mpi_node_2:
     image: ubuntu-mpi
@@ -18,6 +20,8 @@ services:
       - mpi_network
     ports:
       - "8023:22"
+    volumes:
+      - ./shared_volume:/home/ubuntu/data
 
   mpi_node_3:
     image: ubuntu-mpi
@@ -27,6 +31,8 @@ services:
       - mpi_network
     ports:
       - "8024:22"
+    volumes:
+      - ./shared_volume:/home/ubuntu/data
 
   mpi_node_4:
     image: ubuntu-mpi
@@ -36,6 +42,8 @@ services:
       - mpi_network
     ports:
       - "8025:22"
+    volumes:
+      - ./shared_volume:/home/ubuntu/data
 
 networks:
   mpi_network:
