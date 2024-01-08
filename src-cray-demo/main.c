@@ -11,9 +11,16 @@
 #include "../c-ray/src/driver/encoders/encoder.h"
 #include "../c-ray/src/driver/args.h"
 #include "../c-ray/src/driver/sdl.h"
+
+#include "../c-ray/src/lib/renderer/renderer.h"
+#include "../c-ray/src/lib/datatypes/camera.h"
+
+#include "./src/my_render.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 
 
 int main() {
@@ -21,7 +28,7 @@ int main() {
     // int *renderer = cr_renderer_();
     struct cr_renderer *renderer = cr_new_renderer();
 
-    const char *jsonFilePath = "../c-ray/input/hdr.json";
+    const char *jsonFilePath = "./assets/hdr.json";
 
     // Load the JSON file into the cr_renderer
     bool success = cr_load_json(renderer, jsonFilePath);
@@ -33,8 +40,12 @@ int main() {
     }
     printf("Rendering...!\n");
 
-    cr_renderer_render(renderer);
-    
+    // cr_renderer_render(renderer);
+    struct renderer *r = (struct renderer *)renderer;
+    // renderer_render(r);
+
+    my_renderer_render(r);
+
 
     struct imageFile file = (struct imageFile){
 			.filePath = "output/",

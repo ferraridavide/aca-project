@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "renderer.h": "c",
+        "server.h": "c",
+        "tile.h": "c",
+        "my_render.h": "c",
+        "timer.h": "c"
+    }
+}
