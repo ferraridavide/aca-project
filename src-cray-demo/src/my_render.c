@@ -9,6 +9,60 @@
 #define paused_msec 100
 #define active_msec  16
 
+struct tile_set my_tile_quantize(unsigned width, unsigned height, unsigned tile_w, unsigned tile_h, unsigned rank) {
+
+	logr(info, "Quantizing render plane\n");
+
+	struct tile_set set = { 0 };
+	set.tile_mutex = mutex_create();
+
+	//Sanity check on tilesizes
+	if (tile_w >= width) tile_w = width;
+	if (tile_h >= height) tile_h = height;
+	if (tile_w <= 0) tile_w = 1;
+	if (tile_h <= 0) tile_h = 1;
+
+	unsigned tiles_x = width / tile_w;
+	unsigned tiles_y = height / tile_h;
+
+	tiles_x = (width % tile_w) != 0 ? tiles_x + 1: tiles_x;
+	tiles_y = (height % tile_h) != 0 ? tiles_y + 1: tiles_y;
+
+	int tileCount = 0;
+	for (unsigned y = 0; y < tiles_y; ++y) {
+		for (unsigned x = 0; x < tiles_x; ++x) {
+			struct render_tile tile = { 0 };
+			tile.width  = tile_w;
+			tile.height = tile_h;
+			
+			tile.begin.x = x       * tile_w;
+			tile.end.x   = (x + 1) * tile_w;
+			
+			tile.begin.y = y       * tile_h;
+			tile.end.y   = (y + 1) * tile_h;
+			
+			tile.end.x = min((x + 1) * tile_w, width);
+			tile.end.y = min((y + 1) * tile_h, height);
+			
+			tile.width = tile.end.x - tile.begin.x;
+			tile.height = tile.end.y - tile.begin.y;
+
+			tile.state = ready_to_render;
+
+			tile.index = tileCount++;
+
+            if (tile.index == rank){
+    			render_tile_arr_add(&set.tiles, tile);
+            }
+		}
+	}
+	logr(info, "Quantized image into %i tiles. (%ix%i)\n", (tiles_x * tiles_y), tiles_x, tiles_y);
+
+	return set;
+}
+
+
+
 void *my_render_thread(void *arg) {
     block_signals();
 	struct worker *threadState = (struct worker*)thread_user_data(arg);
@@ -30,14 +84,14 @@ void *my_render_thread(void *arg) {
 		
 		while (samples < r->prefs.sampleCount + 1 && r->state.rendering) {
 			timer_start(&timer);
-			for (int y = tile->end.y - 1; y > tile->begin.y - 1; --y) {
+			for (int y = tile->height - 1; y > 0; --y) {
 				for (int x = tile->begin.x; x < tile->end.x; ++x) {
 					if (r->state.render_aborted) goto exit;
 					uint32_t pixIdx = (uint32_t)(y * buf->width + x);
 					initSampler(sampler, SAMPLING_STRATEGY, samples - 1, r->prefs.sampleCount, pixIdx);
 					
 					struct color output = textureGetPixel(buf, x, y, false);
-					struct color sample = path_trace(cam_get_ray(cam, x, y, sampler), r->scene, r->prefs.bounces, sampler);
+					struct color sample = path_trace(cam_get_ray(cam, x, y + tile->begin.y, sampler), r->scene, r->prefs.bounces, sampler);
 					
 					// Clamp out fireflies - This is probably not a good way to do that.
 					nan_clamp(&sample, &output);
@@ -99,7 +153,7 @@ static void my_print_stats(const struct world *scene) {
 		   scene->meshes.count);
 }
 
-void my_renderer_render(struct renderer *r) {
+void my_renderer_render(struct renderer *r, unsigned size, unsigned rank) {
     struct camera camera = r->scene->cameras.items[r->prefs.selected_camera];
 	if (r->prefs.override_width && r->prefs.override_height) {
 		camera.width = r->prefs.override_width ? (int)r->prefs.override_width : camera.width;
@@ -108,16 +162,36 @@ void my_renderer_render(struct renderer *r) {
 	}
 
 	// Verify we have at least a single thread rendering.
-	if (r->state.clients.count == 0 && r->prefs.threads < 1) {
-		logr(warning, "No network render workers, setting thread count to 1\n");
-		r->prefs.threads = 1;
-	}
+	// if (r->state.clients.count == 0 && r->prefs.threads < 1) {
+	// 	logr(warning, "No network render workers, setting thread count to 1\n");
+	// 	r->prefs.threads = 1;
+	// }
 
 	if (!r->scene->background) {
 		r->scene->background = newBackground(&r->scene->storage, NULL, NULL, NULL, r->scene->use_blender_coordinates);
 	}
 	
-	struct tile_set set = tile_quantize(camera.width, camera.height, r->prefs.tileWidth, r->prefs.tileHeight, r->prefs.tileOrder);
+	//struct tile_set set = my_tile_quantize(camera.width, camera.height, r->prefs.tileWidth, r->prefs.tileHeight, rank);
+	struct tile_set set = { 0 };
+	set.tile_mutex = mutex_create();
+
+	struct render_tile tile = { 0 };
+	tile.begin.x = 0;
+	tile.end.x   = camera.width;
+	
+	unsigned tile_h = camera.height / size;
+
+	tile.begin.y = rank       * tile_h;
+	tile.end.y   = (rank + 1) * tile_h;
+
+	tile.width = tile.end.x - tile.begin.x;
+	tile.height = tile.end.y - tile.begin.y;
+
+	tile.state = ready_to_render;
+
+	tile.index = 0;
+
+	render_tile_arr_add(&set.tiles, tile);
 
 	for (size_t i = 0; i < r->scene->shader_buffers.count; ++i) {
 		if (!r->scene->shader_buffers.items[i].bsdfs.count) {
@@ -165,17 +239,17 @@ void my_renderer_render(struct renderer *r) {
 	}
 
     // Render buffer is used to store accurate color values for the renderers' internal use
-	if (!r->state.result_buf) {
+	// if (!r->state.result_buf) {
 		// Allocate
-		r->state.result_buf = newTexture(float_p, camera.width, camera.height, 4);
-	} else if (r->state.result_buf->width != (size_t)camera.width || r->state.result_buf->height != (size_t)camera.height) {
-		// Resize
-		if (r->state.result_buf) destroyTexture(r->state.result_buf);
-		r->state.result_buf = newTexture(float_p, camera.width, camera.height, 4);
-	} else {
-		// Clear
-		tex_clear(r->state.result_buf);
-	}
+		r->state.result_buf = newTexture(float_p, tile.width, tile.height, 4);
+	// } else if (r->state.result_buf->width != (size_t)camera.width || r->state.result_buf->height != (size_t)camera.height) {
+	// 	// Resize
+	// 	if (r->state.result_buf) destroyTexture(r->state.result_buf);
+	// 	r->state.result_buf = newTexture(float_p, camera.width, camera.height, 4);
+	// } else {
+	// 	// Clear
+	// 	tex_clear(r->state.result_buf);
+	// }
 
     struct texture *result = r->state.result_buf;
 
@@ -216,17 +290,17 @@ void my_renderer_render(struct renderer *r) {
 			}
 		});
 	}
-	for (size_t c = 0; c < r->state.clients.count; ++c) {
-		worker_arr_add(&r->state.workers, (struct worker){
-			.client = &r->state.clients.items[c],
-			.renderer = r,
-			.buf = result,
-			.cam = &camera,
-			.thread = (struct cr_thread){
-				.thread_fn = client_connection_thread
-			}
-		});
-	}
+	// for (size_t c = 0; c < r->state.clients.count; ++c) {
+	// 	worker_arr_add(&r->state.workers, (struct worker){
+	// 		.client = &r->state.clients.items[c],
+	// 		.renderer = r,
+	// 		.buf = result,
+	// 		.cam = &camera,
+	// 		.thread = (struct cr_thread){
+	// 			.thread_fn = client_connection_thread
+	// 		}
+	// 	});
+	// }
 	for (size_t w = 0; w < r->state.workers.count; ++w) {
 		r->state.workers.items[w].thread.user_data = &r->state.workers.items[w];
 		r->state.workers.items[w].tiles = &set;

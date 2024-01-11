@@ -44,7 +44,19 @@ int main() {
     struct renderer *r = (struct renderer *)renderer;
     // renderer_render(r);
 
-    my_renderer_render(r);
+
+
+    unsigned sizeOfWorkers = 4;
+    unsigned rank = 3; // [0, sizeOfWorkers - 1]
+    printf("Rank is: %d\n", rank);
+    
+    r->prefs.sampleCount = 250;
+    r->prefs.override_height = 500;
+    r->prefs.override_width = 500;
+    r->prefs.tileWidth = r->prefs.override_width; 
+    r->prefs.tileHeight = r->prefs.override_height / sizeOfWorkers;
+
+    my_renderer_render(r, sizeOfWorkers, rank);
 
 
     struct imageFile file = (struct imageFile){
@@ -64,6 +76,12 @@ int main() {
     writeImage(&file);
     printf("Rendered!\n");
     cr_destroy_renderer(renderer);
+
+
+    //(x + (t->height - (y + 1)) * t->width) * t->channels + 0
+    for (int i = 0; i < 100; ++i) {
+        printf("array[%d] = %.2f\n", i, file.t->data.float_ptr[i]);
+    }
 
     return 0;
     // printf("Hello, World!\n");
