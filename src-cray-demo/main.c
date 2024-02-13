@@ -77,6 +77,8 @@ int main() {
     printf("Rendered!\n");
     cr_destroy_renderer(renderer);
 
+    
+
 
     //(x + (t->height - (y + 1)) * t->width) * t->channels + 0
     for (int i = 0; i < 100; ++i) {
