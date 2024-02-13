@@ -2,7 +2,7 @@
 	"version": 1.0,
 	"renderer": {
 		"threads": 0,
-		"samples": 25,
+		"samples": 250,
 		"bounces": 30,
 		"tileWidth": 25,
 		"tileHeight": 25,
@@ -11,8 +11,8 @@
 		"outputFileName": "rendered",
 		"fileType": "png",
 		"count": 0,
-		"width": 500,
-		"height": 500
+		"width": 250,
+		"height": 250
 	},
 	"display": {
 		"isFullscreen": false,
@@ -427,7 +427,7 @@
 				]
 			},
 			{
-				"fileName": "venusscaled.obj",
+				"fileName": "shapes/venusscaled.obj",
 				"pick_instances": [
 					{
 						"for": "Venus",

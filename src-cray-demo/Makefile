@@ -6,18 +6,18 @@ LIB_DIR = $(CRAY_DIR)/lib
 SRC_DIRS = $(CRAY_DIR)/src/lib $(CRAY_DIR)/src/driver $(CRAY_DIR)/src/common $(CRAY_DIR)/generated/ ./src
 
 # Define compiler and flags
-CC = gcc
-CFLAGS = -g -I$(DRIVER_DIR) -I$(INCLUDE_DIR) -L$(LIB_DIR) -lc-ray -lpthread -lm -ldl
+CC = mpicc
+CFLAGS = -g -I$(DRIVER_DIR) -I$(INCLUDE_DIR) -L$(LIB_DIR) -lc-ray -lpthread -lm -ldl 
 
 # Find all .c files in the specified directories
 SRCS = $(shell find $(SRC_DIRS) -name '*.c' | grep -v 'main.c')
 
 # Define the program output
-OUTPUT = cray-demo
+OUTPUT = ../../data/cray-demo
 
 all: $(OUTPUT)
 
-$(OUTPUT): main.c $(SRCS)
+$(OUTPUT): main-mpi.c $(SRCS)
 	@$(CC) $^ -o $@ $(CFLAGS)
 
 clean:
