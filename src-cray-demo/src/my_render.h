@@ -4,4 +4,4 @@
 #include "../../c-ray/src/lib/renderer/renderer.h"
 
 
-void my_renderer_render(struct renderer *r, unsigned size, unsigned rank);
+void my_renderer_render(struct renderer *r, unsigned from, unsigned to, unsigned samples);

@@ -84,7 +84,7 @@ void *my_render_thread(void *arg) {
 		
 		while (samples < r->prefs.sampleCount + 1 && r->state.rendering) {
 			timer_start(&timer);
-			for (int y = tile->height - 1; y > 0; --y) {
+			for (int y = tile->height - 1; y >= 0; --y) {
 				for (int x = tile->begin.x; x < tile->end.x; ++x) {
 					if (r->state.render_aborted) goto exit;
 					uint32_t pixIdx = (uint32_t)(y * buf->width + x);
@@ -153,7 +153,7 @@ static void my_print_stats(const struct world *scene) {
 		   scene->meshes.count);
 }
 
-void my_renderer_render(struct renderer *r, unsigned size, unsigned rank) {
+void my_renderer_render(struct renderer *r, unsigned from, unsigned to, unsigned samples) {
     struct camera camera = r->scene->cameras.items[r->prefs.selected_camera];
 	if (r->prefs.override_width && r->prefs.override_height) {
 		camera.width = r->prefs.override_width ? (int)r->prefs.override_width : camera.width;
@@ -172,17 +172,17 @@ void my_renderer_render(struct renderer *r, unsigned size, unsigned rank) {
 	}
 	
 	//struct tile_set set = my_tile_quantize(camera.width, camera.height, r->prefs.tileWidth, r->prefs.tileHeight, rank);
+
+	r->prefs.sampleCount = samples;
 	struct tile_set set = { 0 };
 	set.tile_mutex = mutex_create();
 
 	struct render_tile tile = { 0 };
 	tile.begin.x = 0;
 	tile.end.x   = camera.width;
-	
-	unsigned tile_h = camera.height / size;
 
-	tile.begin.y = rank       * tile_h;
-	tile.end.y   = (rank + 1) * tile_h;
+	tile.begin.y = from;
+	tile.end.y   = to;
 
 	tile.width = tile.end.x - tile.begin.x;
 	tile.height = tile.end.y - tile.begin.y;
