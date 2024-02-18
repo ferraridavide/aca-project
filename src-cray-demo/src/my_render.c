@@ -4,6 +4,7 @@
 #include "../../c-ray/src/lib/renderer/pathtrace.h"
 #include "../../c-ray/src/common/platform/signal.h"
 #include "../../c-ray/src/lib/accelerators/bvh.h"
+#include <stdio.h>
 
 //Main thread loop speeds
 #define paused_msec 100
@@ -66,6 +67,8 @@ struct tile_set my_tile_quantize(unsigned width, unsigned height, unsigned tile_
 void *my_render_thread(void *arg) {
     block_signals();
 	struct worker *threadState = (struct worker*)thread_user_data(arg);
+	// Aggiungere int seed al "worker" in "renderer.h"
+	int seed = threadState->seed;
 	struct renderer *r = threadState->renderer;
 	struct texture *buf = threadState->buf;
 	sampler *sampler = newSampler();
@@ -88,7 +91,7 @@ void *my_render_thread(void *arg) {
 				for (int x = tile->begin.x; x < tile->end.x; ++x) {
 					if (r->state.render_aborted) goto exit;
 					uint32_t pixIdx = (uint32_t)(y * buf->width + x);
-					initSampler(sampler, SAMPLING_STRATEGY, samples - 1, r->prefs.sampleCount, pixIdx);
+					initSampler(sampler, Random, samples - 1, r->prefs.sampleCount, pixIdx + seed);
 					
 					struct color output = textureGetPixel(buf, x, y, false);
 					struct color sample = path_trace(cam_get_ray(cam, x, y + tile->begin.y, sampler), r->scene, r->prefs.bounces, sampler);
@@ -153,7 +156,7 @@ static void my_print_stats(const struct world *scene) {
 		   scene->meshes.count);
 }
 
-void my_renderer_render(struct renderer *r, unsigned from, unsigned to, unsigned samples) {
+void my_renderer_render(struct renderer *r, unsigned from, unsigned to, unsigned samples, int seed) {
     struct camera camera = r->scene->cameras.items[r->prefs.selected_camera];
 	if (r->prefs.override_width && r->prefs.override_height) {
 		camera.width = r->prefs.override_width ? (int)r->prefs.override_width : camera.width;
@@ -283,6 +286,7 @@ void my_renderer_render(struct renderer *r, unsigned from, unsigned to, unsigned
 	for (size_t t = 0; t < r->prefs.threads; ++t) {
 		worker_arr_add(&r->state.workers, (struct worker){
 			.renderer = r,
+			.seed = seed,
 			.buf = result,
 			.cam = &camera,
 			.thread = (struct cr_thread){

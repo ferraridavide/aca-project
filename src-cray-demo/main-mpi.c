@@ -24,6 +24,7 @@
 #include <string.h>
 #include <mpi.h>
 #include <bits/getopt_core.h>
+#include <time.h>
 
 #define MAX_FILENAMES 100
 #define MAX_FILENAME_LENGTH 256
@@ -85,7 +86,9 @@ int main(int argc, char *argv[])
         if (rank == size - 1)
             samples += img_samples % size;
         printf("Rank %d, samples: %d, img_height: %d \n", rank, samples, img_height);
-        my_renderer_render(r, 0, img_height, samples);
+        time_t mytime = time((time_t*)0);
+        struct tm *mytm = localtime(&mytime);
+        my_renderer_render(r, 0, img_height, samples, rank + mytm->tm_sec);
     }
     else
     {
@@ -94,7 +97,7 @@ int main(int argc, char *argv[])
         int tile_index = size - rank - 1;
         int tile_start = (tile_index       * img_tile_height) + offset;
         int tile_end   = ((tile_index + 1) * img_tile_height) + offset;
-        my_renderer_render(r, tile_start, tile_end , img_samples);
+        my_renderer_render(r, tile_start, tile_end , img_samples, rank);
     }
 
     char path[20];
@@ -140,7 +143,7 @@ int main(int argc, char *argv[])
             // Media delle immagini
             for (int i = 0; i < img_size; ++i)
             {
-                //res[i] /= size;
+                res[i] /= size;
             }
         }
         printf("Saving...\n");
