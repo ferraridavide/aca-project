@@ -28,6 +28,7 @@
 #define MAX_FILENAMES 100
 #define MAX_FILENAME_LENGTH 256
 #define CHUNK_SIZE 1024
+#define IMG_CHANNELS 4
 
 int main(int argc, char *argv[])
 {
@@ -47,7 +48,7 @@ int main(int argc, char *argv[])
 
     printf("Parallel mode: %s\n", whole_image ? "sampling" : "tiling");
 
-    int rank, size, img_size, img_width, img_height, img_samples, img_tile_height;
+    int rank, size, img_size, img_width, img_height, img_samples;
 
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -76,7 +77,7 @@ int main(int argc, char *argv[])
     img_width = r->prefs.override_width;
     img_samples = r->prefs.sampleCount;
 
-    img_size = img_height * img_width * 4;
+    img_size = img_height * img_width * IMG_CHANNELS;
 
     if (whole_image)
     {
@@ -88,13 +89,12 @@ int main(int argc, char *argv[])
     }
     else
     {
-        img_tile_height = img_height / size;
-        // if (rank == size - 1){
-        //     img_tile_height += img_height % size;
-        // }
+        int img_tile_height = (img_height / size) + (rank == size - 1 ? img_height % size : 0);
+        int offset = rank == size - 1 ? 0 : img_height % size;
         int tile_index = size - rank - 1;
-        printf("Rank %d, samples: %d, img_tile_height: %d \n", rank, img_samples, img_tile_height);
-        my_renderer_render(r, tile_index * img_tile_height, (tile_index + 1) * img_tile_height, img_samples);
+        int tile_start = (tile_index       * img_tile_height) + offset;
+        int tile_end   = ((tile_index + 1) * img_tile_height) + offset;
+        my_renderer_render(r, tile_start, tile_end , img_samples);
     }
 
     char path[20];
@@ -102,7 +102,11 @@ int main(int argc, char *argv[])
 
     struct cr_bitmap *result = cr_renderer_get_result(renderer);
 
-    float res[img_size];
+    float* res = NULL;
+    if (rank == 0){
+            // Allocazione del buffer del rendering completo solo su master
+            res = (float*)malloc(img_size * sizeof(float));
+    }
     MPI_Barrier(MPI_COMM_WORLD);
     printf("All nodes finished rendering...\n");
     if (whole_image)
@@ -111,8 +115,21 @@ int main(int argc, char *argv[])
     }
     else
     {
-        // FIX: Se l'altezza non è divisibile per il numero di nodi , l'immagine esce glitchata
-        MPI_Gather(result->data.float_ptr, img_size/size, MPI_FLOAT, res, img_size/size, MPI_FLOAT, 0, MPI_COMM_WORLD);
+        int* counts = (int*)malloc(size * sizeof(int));
+        int* displacements = (int*)malloc(size * sizeof(int)); 
+
+        for (int i = 0; i < size; ++i) {
+            counts[i] = (img_height / size) * img_width * IMG_CHANNELS;
+            displacements[i] = i * (img_height / size) * img_width * IMG_CHANNELS;
+            if (i == size - 1){
+                counts[i] += (img_height % size) * img_width * IMG_CHANNELS;
+            }
+            printf("rank: %d count[%d]=%d disp=%d\n", rank, i, counts[i], displacements[i]);
+        }
+
+        MPI_Gatherv(result->data.float_ptr, counts[rank], MPI_FLOAT, res, counts, displacements, MPI_FLOAT, 0, MPI_COMM_WORLD);
+        free(counts);
+        free(displacements);
     }
     MPI_Barrier(MPI_COMM_WORLD);
 
@@ -123,7 +140,7 @@ int main(int argc, char *argv[])
             // Media delle immagini
             for (int i = 0; i < img_size; ++i)
             {
-                res[i] /= size;
+                //res[i] /= size;
             }
         }
         printf("Saving...\n");
@@ -131,7 +148,7 @@ int main(int argc, char *argv[])
             .colorspace = cr_bm_linear,
             .precision = cr_bm_float,
             .data = {.float_ptr = res},
-            .stride = 4,
+            .stride = IMG_CHANNELS,
             .width = img_width,
             .height = img_height};
 
@@ -152,8 +169,10 @@ int main(int argc, char *argv[])
     }
 
     cr_destroy_renderer(renderer);
+    free(res);
 
     MPI_Finalize();
+
 
     return 0;
 }
