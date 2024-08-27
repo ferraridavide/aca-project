@@ -33,9 +33,11 @@
 
 int main(int argc, char *argv[])
 {
+    const char *jsonFilePath = NULL; 
+    const char *outputPath = NULL; 
     bool whole_image = false; // args_is_set(opts, "mode") && strcmp(args_string(opts, "mode"), "sampling");
     int opt;
-    while ((opt = getopt(argc, argv, "m:")) != -1)
+    while ((opt = getopt(argc, argv, "m:f:o:")) != -1)
     {
         switch (opt)
         {
@@ -44,6 +46,13 @@ int main(int argc, char *argv[])
             {
                 whole_image = true;
             }
+            break;
+        case 'f':
+            jsonFilePath = optarg;
+            break;
+        case 'o':
+            outputPath = optarg;
+            break;
         }
     }
 
@@ -58,7 +67,6 @@ int main(int argc, char *argv[])
     // Every process needs its own renderer
     struct cr_renderer *renderer = cr_new_renderer();
 
-    const char *jsonFilePath = "./assets/hdr.json";
 
     bool success = cr_load_json(renderer, jsonFilePath);
 
@@ -71,6 +79,8 @@ int main(int argc, char *argv[])
         printf("Failed!\n");
     }
     printf("Rendering...!\n");
+
+    clock_t start = clock();
 
     struct renderer *r = (struct renderer *)renderer;
 
@@ -136,6 +146,11 @@ int main(int argc, char *argv[])
     }
     MPI_Barrier(MPI_COMM_WORLD);
 
+    clock_t end = clock();
+
+    double cpu_time_used = ((end - start) / (double)CLOCKS_PER_SEC);
+    printf("Rendering time: %f milliseconds\n", cpu_time_used);
+
     if (rank == 0)
     {
         if (whole_image)
@@ -156,7 +171,7 @@ int main(int argc, char *argv[])
             .height = img_height};
 
         struct imageFile file = (struct imageFile){
-            .filePath = "output/",
+            .filePath = outputPath,
             .fileName = "output",
             .count = 0,
             .type = png,

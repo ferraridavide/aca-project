@@ -28,7 +28,7 @@ int main() {
     // int *renderer = cr_renderer_();
     struct cr_renderer *renderer = cr_new_renderer();
 
-    const char *jsonFilePath = "./assets/hdr.json";
+    const char *jsonFilePath = "../aca-project/src-cray-demo/assets/hdr.json";
 
     // Load the JSON file into the cr_renderer
     bool success = cr_load_json(renderer, jsonFilePath);
