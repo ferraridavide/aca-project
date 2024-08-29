@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
     clock_t end = clock();
 
     double cpu_time_used = ((end - start) / (double)CLOCKS_PER_SEC);
-    printf("Rendering time: %f milliseconds\n", cpu_time_used);
+    printf("Rendering time: %f seconds\n", cpu_time_used);
 
     if (rank == 0)
     {

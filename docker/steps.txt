@@ -1,0 +1,22 @@
+Guida docker:
+
+- Buildare l'immagine docker
+- Creare cartella shared_volume vicino al docker compose yml
+- Lanciare il docker compose con 'docker compose --file .\docker-compose-clusters.yml up'
+- Accedere al primo nodo
+- Clonare sul primo nodo la repo aca-project
+- Clonare anche c-ray e fare il checkout di 84109d4 con 'git clone https://github.com/vkoskiv/c-ray' 'git checkout 84109d4'
+- Dentro c-ray, Aggiungere int seed al "worker" in "c-ray/src/lib/renderer/renderer.h" 
+- Installare 'sudo apt install libsdl2-dev'
+- Dentro c-ray dare 'make' e 'make lib' e 'export LD_LIBRARY_PATH=../c-ray/lib:$LD_LIBRARY_PATH'
+- Dare make in 'src-cray-demo', compila in ../../data/cray-demo
+- Creare la cartella '../../data/output'
+- './cray-demo -f ../aca-project/src-cray-demo/assets/hdr.json -o output/'
+
+
+
+- da node-1, creare la chiave con ssh-keygen, senza password
+- copiare la chiave con 'ssh-copy-id user@remote_server' per ognuno dei nodi rimanenti
+- creare hostfile con i nodi in data
+- copiare anche da macchina host la cartella assets in shared_volume
+- 'mpirun --hostfile hostfile -np 4 ./cray-demo -f [...] -o [...]'

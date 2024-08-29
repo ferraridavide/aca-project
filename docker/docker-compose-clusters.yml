@@ -2,7 +2,7 @@ version: '3'
 
 services:
   mpi_node_1:
-    image: ubuntu-mpi
+    image: mpi
     container_name: mpi-node-1
     hostname: mpi-node-1
     networks:
@@ -10,10 +10,10 @@ services:
     ports:
       - "8022:22"
     volumes:
-      - ./shared_volume:/home/ubuntu/data
+      - ./shared_volume:/home/mpi/data
 
   mpi_node_2:
-    image: ubuntu-mpi
+    image: mpi
     container_name: mpi-node-2
     hostname: mpi-node-2
     networks:
@@ -21,10 +21,10 @@ services:
     ports:
       - "8023:22"
     volumes:
-      - ./shared_volume:/home/ubuntu/data
+      - ./shared_volume:/home/mpi/data
 
   mpi_node_3:
-    image: ubuntu-mpi
+    image: mpi
     container_name: mpi-node-3
     hostname: mpi-node-3
     networks:
@@ -32,10 +32,10 @@ services:
     ports:
       - "8024:22"
     volumes:
-      - ./shared_volume:/home/ubuntu/data
+      - ./shared_volume:/home/mpi/data
 
   mpi_node_4:
-    image: ubuntu-mpi
+    image: mpi
     container_name: mpi-node-4
     hostname: mpi-node-4
     networks:
@@ -43,7 +43,7 @@ services:
     ports:
       - "8025:22"
     volumes:
-      - ./shared_volume:/home/ubuntu/data
+      - ./shared_volume:/home/mpi/data
 
 networks:
   mpi_network:

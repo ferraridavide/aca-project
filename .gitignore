@@ -1,2 +1,2 @@
-# Ignored c-ray project
-/c-ray/*
+Test/
+docker/shared_volume/
