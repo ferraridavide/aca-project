@@ -1,0 +1,256 @@
+{
+	"version": 1.0,
+	"renderer": {
+		"threads": 0,
+		"samples": 100,
+		"bounces": 25,
+		"tileWidth": 64,
+		"tileHeight": 64,
+		"tileOrder": "fromMiddle",
+		"outputFilePath": "output/",
+		"outputFileName": "rendered",
+		"fileType": "png",
+		"count": 0,
+		"width": 800,
+		"height": 1280
+	},
+	"display": {
+		"isFullscreen": false,
+		"isBorderless": false,
+		"windowScale": 1.0
+	},
+	"camera": {
+		"FOV": 12.0,
+		"fstops": 0.0,
+		"transforms": [
+			{
+				"type": "translate",
+				"x": -1370,
+				"y": 420,
+				"z": 750
+			},
+			{
+				"type": "rotateX",
+				"degrees": 1
+			},
+			{
+				"type": "rotateY",
+				"degrees": -90
+			}
+		]
+	},
+	"scene": {
+		"ambientColor": {
+			"type": "background",
+			"down": {
+				"r": 1.0,
+				"g": 1.0,
+				"b": 1.0
+			},
+			"up": {
+				"r": 0.5,
+				"g": 0.7,
+				"b": 1.0
+			}
+		},
+		"primitives": [
+			{
+				"type": "sphere",
+				"instances": [
+					{
+						"transforms": [
+							{
+								"type": "translate",
+								"x": 650,
+								"y": 450,
+								"z": 1650
+							}
+						]
+					}
+				],
+				"color": {
+					"r": 1.0,
+					"g": 0.0,
+					"b": 0.5
+				},
+				"bsdf": "lambertian",
+				"reflectivity": 1.0,
+				"radius": 150
+			},
+			{
+				"type": "sphere",
+				"instances": [
+					{
+						"transforms": [
+							{
+								"type": "translate",
+								"x": 950,
+								"y": 350,
+								"z": 1500
+							}
+						]
+					}
+				],
+				"color": {
+					"r": 1.0,
+					"g": 1.0,
+					"b": 1.0
+				},
+				"bsdf": "lambertian",
+				"reflectivity": 1.0,
+				"radius": 50
+			},
+			{
+				"type": "sphere",
+				"instances": [
+					{
+						"transforms": [
+							{
+								"type": "translate",
+								"x": 1100,
+								"y": 350,
+								"z": 1500
+							}
+						]
+					}
+				],
+				"color": {
+					"r": 0.0,
+					"b": 0.0,
+					"g": 0.0
+				},
+				"bsdf": "lambertian",
+				"reflectivity": 0.0,
+				"radius": 50
+			},
+			{
+				"type": "sphere",
+				"instances": [
+					{
+						"transforms": [
+							{
+								"type": "translate",
+								"x": 1050,
+								"y": 310,
+								"z": 820
+							}
+						]
+					}
+				],
+				"radius": 2.5,
+				"color": {
+					"r": 1.0,
+					"g": 0.0,
+					"b": 0.0
+				},
+				"bsdf": "emissive",
+				"strength": 10.0
+			},
+			{
+				"type": "sphere",
+				"instances": [
+					{
+						"transforms": [
+							{
+								"type": "translate",
+								"x": 450,
+								"y": 460,
+								"z": 1700
+							}
+						]
+					}
+				],
+				"radius": 60,
+				"color": {
+					"r": 1.0,
+					"g": 0.0901,
+					"b": 0.945
+				},
+				"bsdf": "emissive",
+				"strength": 15
+			},
+			{
+				"type": "sphere",
+				"instances": [
+					{
+						"transforms": [
+							{
+								"type": "translate",
+								"x": 1070,
+								"y": 310,
+								"z": 820
+							}
+						]
+					}
+				],
+				"radius": 2.5,
+				"color": {
+					"r": 0.0,
+					"g": 1.0,
+					"b": 0.0
+				},
+				"bsdf": "emissive",
+				"strength": 10.0
+			},
+			{
+				"type": "sphere",
+				"instances": [
+					{
+						"transforms": [
+							{
+								"type": "translate",
+								"x": 1090,
+								"y": 310,
+								"z": 820
+							}
+						]
+					}
+				],
+				"radius": 2.5,
+				"color": {
+					"r": 0.0,
+					"g": 0.0,
+					"b": 1.0
+				},
+				"bsdf": "emissive",
+				"strength": 10.0
+			}
+		],
+		"meshes": [
+			{
+				"fileName": "venusscaled.obj",
+				"pick_instances": [
+					{
+						"for": "Venus",
+						"materials": [
+							{
+								"replace": "default",
+								"type": "diffuse",
+								"color": [0.98, 0.98, 0.98]
+							}
+						],
+						"transforms": [
+							{
+								"type": "scaleUniform",
+								"scale": 70
+							},
+							{
+								"type": "rotateY",
+								"degrees": -90
+							},
+							{
+								"type": "translate",
+								"x": 700,
+								"y": 310,
+								"z": 750
+							}
+						]
+					}
+				]
+			},
+			{
+				"fileName": "newScene.obj"
+			}
+		]
+	}
+}

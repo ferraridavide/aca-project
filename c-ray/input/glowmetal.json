@@ -1,0 +1,109 @@
+{
+	"version": 1.0,
+	"renderer": {
+		"threads": 0,
+		"samples": 100,
+		"bounces": 30,
+		"tileWidth": 64,
+		"tileHeight": 64,
+		"tileOrder": "random",
+		"outputFilePath": "output/",
+		"outputFileName": "rendered",
+		"fileType": "png",
+		"count": 0,
+		"width": 800,
+		"height": 800
+	},
+	"display": {
+		"isFullscreen": false,
+		"isBorderless": false,
+		"windowScale": 1.0
+	},
+	"camera": {
+		"FOV": 18,
+		"focalDistance": 0.7,
+		"fstops": 0,
+		"transforms": [
+			{
+				"type": "translate",
+				"x": 0,
+				"y": 0,
+				"z": -0.7
+			}
+		]
+	},
+	"scene": {
+		"ambientColor": {
+			"type": "background",
+			"offset": 0,
+			"down": {
+				"r": 0.1,
+				"g": 0.1,
+				"b": 0.1
+			},
+			"up": {
+				"r": 0.1,
+				"g": 0.1,
+				"b": 0.1
+			}
+		},
+		"primitives": [
+			{
+				"type": "sphere",
+				"instances": [
+					{
+						"transforms": [
+							{
+								"type": "rotateY",
+								"degrees": 0
+							}
+						]
+					}
+				],
+				"material": {
+					"type": "mix",
+					"A": {
+						"type": "mix",
+						"A": {
+							"type": "metal",
+							"roughness": 0.0
+						},
+						"B": {
+							"type": "emissive",
+							"color": {
+								"type": "blackbody",
+								"degrees": 2000
+							},
+							"strength": 40
+						},
+						"factor": 0.5
+					},
+					"B": {
+						"type": "glass",
+						"color": [1.0, 1.0, 1.0]
+					},
+					"factor": {
+						"type": "checkerboard",
+						"scale": 50
+					}
+				},
+				"radius": 0.05
+			}
+		],
+		"meshes": [
+			{
+				"fileName": "shapes/gridplane.obj",
+				"pick_instances": [
+					{
+						"transforms": [
+							{
+								"type": "translate",
+								"Y": -0.05
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+}
