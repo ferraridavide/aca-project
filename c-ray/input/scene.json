@@ -1,0 +1,518 @@
+{
+	"version": 1.0,
+	"renderer": {
+		"threads": 0,
+		"samples": 64,
+		"bounces": 32,
+		"tileWidth": 64,
+		"tileHeight": 64,
+		"tileOrder": "fromMiddle",
+		"outputFilePath": "output/",
+		"outputFileName": "rendered",
+		"fileType": "png",
+		"count": 0
+	},
+	"display": {
+		"isFullscreen": false,
+		"isBorderless": false,
+		"windowScale": 1.0
+	},
+	"camera": {
+		"FOV": 80.0,
+		"focalDistance": 450.0,
+		"fstops": 0.0,
+		"width": 1280,
+		"height": 800,
+		"transforms": [
+			{
+				"type": "translate",
+				"x": -970,
+				"y": 480,
+				"z": 600
+			},
+			{
+				"type": "rotateX",
+				"degrees": 21
+			},
+			{
+				"type": "rotateZ",
+				"degrees": 9
+			}
+		]
+	},
+	"scene": {
+		"ambientColor": {
+			"type": "background",
+			"down": {
+				"r": 1.0,
+				"g": 1.0,
+				"b": 1.0
+			},
+			"up": {
+				"r": 0.5,
+				"g": 0.7,
+				"b": 1.0
+			}
+		},
+		"primitives": [
+			{
+				"type": "sphere",
+				"instances": [
+					{
+						"transforms": [
+							{
+								"type": "translate",
+								"x": 650,
+								"y": 450,
+								"z": 1650
+							}
+						]
+					}
+				],
+				"material": {
+					"type": "metal",
+					"color": {
+						"r": 1.0,
+						"g": 0.0,
+						"b": 1.0
+					},
+					"reflectivity": 1.0
+				},
+				"radius": 150
+			},
+			{
+				"type": "sphere",
+				"instances": [
+					{
+						"transforms": [
+							{
+								"type": "translate",
+								"x": 950,
+								"y": 350,
+								"z": 1500
+							}
+						]
+					}
+				],
+				"material": {
+					"type": "metal",
+					"color": {
+						"r": 1.0,
+						"g": 1.0,
+						"b": 1.0
+					},
+					"reflectivity": 1.0
+				},
+				"radius": 50
+			},
+			{
+				"type": "sphere",
+				"instances": [
+					{
+						"transforms": [
+							{
+								"type": "translate",
+								"x": 1100,
+								"y": 350,
+								"z": 1500
+							}
+						]
+					}
+				],
+				"material": {
+					"type": "metal",
+					"color": {
+						"r": 1.0,
+						"g": 0.87,
+						"b": 0.0
+					},
+					"reflectivity": 0.0
+				},
+				"radius": 50
+			},
+			{
+				"type": "sphere",
+				"instances": [
+					{
+						"transforms": [
+							{
+								"type": "translate",
+								"x": 1050,
+								"y": 310,
+								"z": 820
+							}
+						]
+					}
+				],
+				"radius": 2.5,
+				"material": {
+					"type": "emissive",
+					"color": {
+						"r": 1.0,
+						"g": 0.0,
+						"b": 0.0
+					},
+					"strength": 10.0
+				}
+			},
+			{
+				"type": "sphere",
+				"instances": [
+					{
+						"transforms": [
+							{
+								"type": "translate",
+								"x": 1070,
+								"y": 310,
+								"z": 820
+							}
+						]
+					}
+				],
+				"radius": 2.5,
+				"material": {
+					"type": "emissive",
+					"color": {
+						"r": 0.0,
+						"g": 1.0,
+						"b": 0.0
+					},
+					"strength": 10.0
+				}
+			},
+			{
+				"type": "sphere",
+				"instances": [
+					{
+						"transforms": [
+							{
+								"type": "translate",
+								"x": 1090,
+								"y": 310,
+								"z": 820
+							}
+						]
+					}
+				],
+				"radius": 2.5,
+				"material": {
+					"type": "emissive",
+					"color": {
+						"r": 0.0,
+						"g": 0.0,
+						"b": 1.0
+					},
+					"strength": 10.0
+				}
+			},
+			{
+				"type": "sphere",
+				"instances": [
+					{
+						"transforms": [
+							{
+								"type": "translate",
+								"x": 950,
+								"y": 420,
+								"z": 1500
+							}
+						]
+					}
+				],
+				"material": {
+					"type": "emissive",
+					"color": {
+						"r": 1.0,
+						"g": 1.0,
+						"b": 1.0
+					},
+					"strength": 10.0
+				},
+				"radius": 10
+			}
+		],
+		"meshes": [
+			{
+				"fileName": "tonni.obj",
+				"pick_instances": [
+					{
+						"for": "tonninseteli",
+						"transforms": [
+							{
+								"type": "scaleUniform",
+								"scale": 100
+							},
+							{
+								"type": "rotateX",
+								"degrees": 90
+							},
+							{
+								"type": "rotateY",
+								"radians": 3.14
+							},
+							{
+								"type": "rotateZ",
+								"degrees": 180
+							},
+							{
+								"type": "translate",
+								"x": 1100,
+								"y": 360,
+								"z": 1050
+							}
+						]
+					}
+				]
+			},
+			{
+				"fileName": "newScene.obj",
+				"materials": [
+					{
+						"replace": "mirror_mtl",
+						"type": "metal",
+						"roughness": 0,
+						"color": [0.5,0.5,0.5]
+					}
+				]
+			},
+			{
+				"fileName": "torus.obj",
+				"pick_instances": [
+					{
+						"for": "Torus",
+						"transforms": [
+							{
+								"type": "scaleUniform",
+								"scale": 40
+							},
+							{
+								"type": "translate",
+								"x": 1070,
+								"y": 310,
+								"z": 820
+							}
+						]
+					}
+				]
+			},
+			{
+				"fileName": "teapot.obj",
+				"pick_instances": [
+					{
+						"for": "teapot.005",
+						"transforms": [
+							{
+								"type": "scaleUniform",
+								"scale": 80
+							},
+							{
+								"type": "rotateY",
+								"degrees": 45
+							},
+							{
+								"type": "translate",
+								"x": 740,
+								"y": 299,
+								"z": 900
+							}
+						]
+					},
+					{
+						"for": "teapot.005",
+						"transforms": [
+							{
+								"type": "scaleUniform",
+								"scale": 80
+							},
+							{
+								"type": "rotateY",
+								"degrees": 45
+							},
+							{
+								"type": "translate",
+								"x": 740,
+								"y": 299,
+								"z": 1050
+							}
+						]
+					},
+					{
+						"for": "teapot.005",
+						"transforms": [
+							{
+								"type": "scaleUniform",
+								"scale": 80
+							},
+							{
+								"type": "rotateY",
+								"degrees": 45
+							},
+							{
+								"type": "translate",
+								"x": 740,
+								"y": 299,
+								"z": 1200
+							}
+						]
+					},
+					{
+						"for": "teapot.005",
+						"materials": [
+							{
+								"replace": "red",
+								"type": "diffuse",
+								"color": [0, 1, 0]
+							}
+						],
+						"transforms": [
+							{
+								"type": "scaleUniform",
+								"scale": 80
+							},
+							{
+								"type": "rotateY",
+								"degrees": 20
+							},
+							{
+								"type": "translate",
+								"x": 970,
+								"y": 299,
+								"z": 900
+							}
+						]
+					},
+					{
+						"for": "teapot.005",
+						"materials": [
+							{
+								"replace": "red",
+								"type": "diffuse",
+								"color": [0, 1, 0]
+							}
+						],
+						"transforms": [
+							{
+								"type": "scaleUniform",
+								"scale": 80
+							},
+							{
+								"type": "rotateY",
+								"degrees": 20
+							},
+							{
+								"type": "translate",
+								"x": 970,
+								"y": 299,
+								"z": 1050
+							}
+						]
+					},
+					{
+						"for": "teapot.005",
+						"materials": [
+							{
+								"replace": "red",
+								"type": "diffuse",
+								"color": [0, 1, 0]
+							}
+						],
+						"transforms": [
+							{
+								"type": "scaleUniform",
+								"scale": 80
+							},
+							{
+								"type": "rotateY",
+								"degrees": 20
+							},
+							{
+								"type": "translate",
+								"x": 970,
+								"y": 299,
+								"z": 1200
+							}
+						]
+					},
+					{
+						"for": "teapot.005",
+						"materials": [
+							{
+								"replace": "red",
+								"type": "diffuse",
+								"color": [0, 0, 1]
+							}
+						],
+						"transforms": [
+							{
+								"type": "scaleUniform",
+								"scale": 80
+							},
+							{
+								"type": "rotateY",
+								"degrees": 155
+							},
+							{
+								"type": "translate",
+								"x": 1210,
+								"y": 299,
+								"z": 900
+							}
+						]
+					},
+					{
+						"for": "teapot.005",
+						"materials": [
+							{
+								"replace": "red",
+								"type": "diffuse",
+								"color": [0, 0, 1]
+							}
+						],
+						"transforms": [
+							{
+								"type": "scaleUniform",
+								"scale": 80
+							},
+							{
+								"type": "rotateY",
+								"degrees": 155
+							},
+							{
+								"type": "translate",
+								"x": 1210,
+								"y": 299,
+								"z": 1050
+							}
+						]
+					},
+					{
+						"for": "teapot.005",
+						"materials": [
+							{
+								"replace": "red",
+								"type": "diffuse",
+								"color": [0, 0, 1]
+							}
+						],
+						"transforms": [
+							{
+								"type": "scaleUniform",
+								"scale": 80
+							},
+							{
+								"type": "rotateY",
+								"degrees": 155
+							},
+							{
+								"type": "translate",
+								"x": 1210,
+								"y": 299,
+								"z": 1200
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+}
